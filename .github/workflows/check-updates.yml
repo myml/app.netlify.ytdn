@@ -1,0 +1,37 @@
+name: Check for Updates
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  check-updates:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq curl
+
+      - name: Run update checker
+        id: check_updates
+        run: |
+          chmod +x .github/scripts/check_updates.sh
+          .github/scripts/check_updates.sh
+
+      - name: Commit and push if changes
+        if: steps.check_updates.outputs.has_changes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add linglong.yaml
+          git commit -m "chore: update sources with latest releases"
+          git push
