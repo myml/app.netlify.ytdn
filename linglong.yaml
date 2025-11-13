@@ -1,0 +1,56 @@
+version: "1"
+
+package:
+  id: app.netlify.ytdn
+  name: ytDownloader
+  version: 3.19.3.0
+  kind: app
+  description: |
+    Download videos and audios from hundreds of sites
+  author: wurongjie@deepin.org
+
+base: org.deepin.base/25.2.1
+
+command:
+  - "/opt/apps/app.netlify.ytdn/files/opt/YTDownloader/ytdownloader"
+
+build: |
+  dpkg-deb -X linglong/sources/YTDownloader_Linux.deb $PREFIX/
+  mkdir -p $PREFIX/share
+  mv $PREFIX/usr/share/icons $PREFIX/usr/share/applications $PREFIX/share/
+  rm -r $PREFIX/usr
+  # 重命名图标文件，避免和其他应用冲突
+  find $PREFIX/share/icons -type f -name "ytdownloader.png" | while read line; do
+    newpath=$(echo $line | sed "s#ytdownloader#$LINGLONG_APPID#")
+    mv $line $newpath
+  done
+  # 重命名.desktop文件，避免和其他应用冲突
+  mv $PREFIX/share/applications/ytdownloader.desktop $PREFIX/share/applications/$LINGLONG_APPID.desktop
+  # 修改.desktop文件内容
+  sed -i "s#Icon=ytdownloader#Icon=$LINGLONG_APPID#g" $PREFIX/share/applications/$LINGLONG_APPID.desktop
+  sed -i "s#/opt/YTDownloader/ytdownloader#$PREFIX/opt/YTDownloader/ytdownloader#g" $PREFIX/share/applications/$LINGLONG_APPID.desktop
+
+  mkdir -p $PREFIX/bin/
+  cp linglong/sources/yt-dlp $PREFIX/bin/
+
+  mkdir -p $PREFIX/etc/
+  cat profile.template | envsubst > $PREFIX/etc/profile
+  cat ld.so.conf.template | envsubst > $PREFIX/etc/ld.so.conf
+
+buildext:
+  apt:
+    depends:
+      - ffmpeg
+      # ffmpeg依赖这两个包的so，但没写到依赖里，需要手动添加
+      - libblas3
+      - liblapack3
+
+sources:
+  - kind: file
+    url: "https://edgeone.gh-proxy.com/https://github.com/aandrew-me/ytDownloader/releases/download/v3.19.3/YTDownloader_Linux.deb"
+    digest: "a54d186d52b4c9e7a1584030861c5a5bcbf06c31fa4cd31ae07e55543bc87127"
+    name: YTDownloader_Linux.deb
+  - kind: file
+    url: "https://edgeone.gh-proxy.com/https://github.com/yt-dlp/yt-dlp/releases/download/2025.11.12/yt-dlp_linux"
+    digest: "1b48caf7d5ef7826a72595fb9bcb194c7ee3a877ea5e10d26b52bc996757761b"
+    name: yt-dlp
