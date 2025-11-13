@@ -1,0 +1,2 @@
+$PREFIX/lib/x86_64-linux-gnu/lapack
+$PREFIX/lib/x86_64-linux-gnu/blas
