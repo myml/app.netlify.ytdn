@@ -3,7 +3,7 @@ version: "1"
 package:
   id: app.netlify.ytdn
   name: ytDownloader
-  version: 3.20.2.0222
+  version: 3.20.2.0304
   kind: app
   description: |
     Download videos and audios from hundreds of sites
@@ -51,6 +51,6 @@ sources:
     digest: 1a898b936a7036d08ba68dc461be8a2e66f8677951247a8aeecb8bffbb28553d
     name: YTDownloader_Linux.deb
   - kind: file
-    url: https://edgeone.gh-proxy.com/https://github.com/yt-dlp/yt-dlp/releases/download/2026.02.21/yt-dlp_linux
-    digest: 057098b1390e8d4931e143eb889e9bbe088f17e40a2936f31ee218909f806f5f
+    url: https://edgeone.gh-proxy.com/https://github.com/yt-dlp/yt-dlp/releases/download/2026.03.03/yt-dlp_linux
+    digest: cc706b94cde1cf92cc155e3632aa290ab5f3809ada8c56c23311335508decdf9
     name: yt-dlp
